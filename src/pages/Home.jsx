@@ -1,15 +1,15 @@
-// src/pages/Home.js
 import React from 'react';
 import ListMenu from '../component/ListMenu';
-import { Typography, Container } from '@mui/material';
+import { Container } from '@mui/material';
 import ButtonSubir from '../component/ButtonSubir';
 import ButtonDelivery from '../component/ButtonDelivery';
+
 function Home() {
   return (
-    <Container>
+    <Container style={{ padding: 0, backgroundColor: '#f7f1e3', minHeight: '100vh' }} disableGutters>
       <ListMenu />
-      <ButtonDelivery/>
-      <ButtonSubir/>
+      <ButtonDelivery />
+      <ButtonSubir />
     </Container>
   );
 }

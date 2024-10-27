@@ -1,6 +1,5 @@
-// ListMenu.js
 import React from 'react';
-import { List, ListItem, ListItemText, Typography, Divider } from '@mui/material';
+import { List, ListItem, Typography, Divider } from '@mui/material';
 import '@fontsource/lobster';
 import logo from '/logo.png';
 import CardMenu from './CardMenu';
@@ -31,23 +30,20 @@ function ListMenu() {
           </Typography>
           <List>
             {menuItems[categoria].map((item, index) => (
-              <div id="menu" style={{ backgroundColor: '#f7f1e3' }} key={index}>
-                {/* Contenido del componente */}
-                <ListItem style={{ padding: '10px 0' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
-                    <Typography variant="body1" style={{ color: '#34495e', fontWeight: 'bold' }}>
-                      {item.tipo}
-                    </Typography>
-                    <Typography variant="body2" style={{ color: '#7f8c8d' }}>
-                      {categoria === 'empanadas'
-                        ? `X unidad: $${item.precio} | X Docena: $${item.precioDoc}`
-                        : categoria === 'pizzas'
-                        ? `Grande: $${item.grande} | Chica: $${item.precio}`
-                        : `$${item.precio}`}
-                    </Typography>
-                  </div>
-                </ListItem>
-              </div>
+              <ListItem key={index} style={{ padding: '10px 0', backgroundColor: '#f7f1e3' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                  <Typography variant="body1" style={{ color: '#34495e', fontWeight: 'bold' }}>
+                    {item.tipo}
+                  </Typography>
+                  <Typography variant="body2" style={{ color: '#7f8c8d' }}>
+                    {categoria === 'empanadas'
+                      ? `X unidad: $${item.precio} | X Docena: $${item.precioDoc}`
+                      : categoria === 'pizzas'
+                      ? `Grande: $${item.grande} | Chica: $${item.precio}`
+                      : `$${item.precio}`}
+                  </Typography>
+                </div>
+              </ListItem>
             ))}
           </List>
           <Divider style={{ margin: '10px 0', backgroundColor: '#d35400' }} />

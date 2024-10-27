@@ -4,7 +4,7 @@ import viteLogo from '/vite.svg'
 import { datos } from './data/datos'
 import Home from './pages/Home'
 import Footer from './layout/Footer'
-
+import './index.css'
 function App() {
 
   return (

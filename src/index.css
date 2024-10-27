@@ -1,0 +1,83 @@
+/* Estilo global */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif; /* Fuente base */
+    background-color: #f7f1e3; /* Color de fondo */
+    color: #34495e; /* Color de texto */
+  }
+  
+  /* Asegúrate de que el contenedor principal ocupe toda la pantalla */
+  html, body {
+    height: 100%;
+  }
+  
+  /* Estilo para el contenedor principal */
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+  }
+  
+  /* Estilos para los encabezados */
+  h1, h2, h3, h4, h5 {
+    margin: 0;
+    color: #2c3e50; /* Color de los encabezados */
+  }
+  
+  /* Estilo para el logo */
+  .logo {
+    width: 250px;
+    height: auto;
+    border-radius: 100%;
+  }
+  
+  /* Estilos para los botones */
+  button {
+    background-color: #d35400; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    border: none; /* Sin borde */
+    border-radius: 5px; /* Bordes redondeados */
+    padding: 10px 20px; /* Relleno del botón */
+    cursor: pointer; /* Cursor de mano */
+    transition: background-color 0.3s; /* Transición suave para el hover */
+  }
+  
+  button:hover {
+    background-color: #c0392b; /* Color de fondo del botón al pasar el mouse */
+  }
+  
+  /* Estilos para las listas */
+  ul, li {
+    list-style: none; /* Quita las viñetas */
+    padding: 0; /* Sin relleno */
+    margin: 0; /* Sin margen */
+  }
+  
+  /* Estilo para las listas del menú */
+  .MuiListItem-root {
+    padding: 10px 0; /* Espaciado entre los ítems */
+    background-color: #f7f1e3; /* Color de fondo de los ítems */
+  }
+  
+  /* Estilo para los enlaces */
+  a {
+    text-decoration: none; /* Sin subrayado */
+    color: #d35400; /* Color del enlace */
+    transition: color 0.3s; /* Transición suave para el hover */
+  }
+  
+  a:hover {
+    color: #c0392b; /* Color del enlace al pasar el mouse */
+  }
+  
+  /* Estilos para el pie de página */
+  footer {
+    margin-top: auto; /* Asegura que el pie de página esté al final */
+    padding: 20px;
+    text-align: center;
+    background-color: #34495e; /* Color de fondo del pie de página */
+    color: white; /* Color del texto del pie de página */
+  }

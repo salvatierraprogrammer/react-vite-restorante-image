@@ -1,7 +1,7 @@
-// CardMenu.js
 import React from 'react';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
 
+// Define the icon mapping for each category
 const iconMap = {
     empanadas: <span>🥟</span>,
     pizzas: <span>🍕</span>,
@@ -23,46 +23,20 @@ function CardMenu({ datos }) {
 
     return (
         <Grid container spacing={2} justifyContent="center" style={{ marginBottom: '30px' }}>
-            {/* Tarjeta de "Menú" */}
-            <Grid item xs={12} sm={6} md={4} lg={3}>
-                <Card 
-                    style={{
-                        minWidth: '200px', 
-                        maxWidth: '300px', 
-                        margin: '10px',
-                        cursor: 'pointer'
-                    }}
-                    onClick={() => handleCardClick('menu')} 
-                >
-                    <CardContent style={{ textAlign: 'center' }}>
-                        <div style={{ marginBottom: '15px' }}>
-                            <span>📋</span> 
-                        </div>
-                        <Typography variant="h6" style={{ color: '#2c3e50', fontWeight: 'bold' }}>
-                            Menú
-                        </Typography>
-                        <Typography variant="body2" style={{ color: '#7f8c8d' }}>
-                            Explora nuestras opciones
-                        </Typography>
-                    </CardContent>
-                </Card>
-            </Grid>
-
-            {/* Tarjetas de categorías */}
             {Object.keys(datos[0]).map((categoria) => (
-                <Grid item xs={12} sm={6} md={4} lg={3} key={categoria}>
+                <Grid item xs={6} sm={4} md={3} lg={2} key={categoria}>
                     <Card 
                         style={{
-                            minWidth: '200px', 
-                            maxWidth: '300px', 
+                            minWidth: '150px',  // Ajusta el tamaño mínimo
+                            maxWidth: '200px',  // Ajusta el tamaño máximo
                             margin: '10px',
-                            cursor: 'pointer'
+                            cursor: 'pointer' // Cambiar el cursor al pasar sobre la tarjeta
                         }} 
                         onClick={() => handleCardClick(categoria)}
                     >
                         <CardContent style={{ textAlign: 'center' }}>
                             <div style={{ marginBottom: '15px' }}>
-                                {iconMap[categoria] || <span>🔄</span>}
+                                {iconMap[categoria] || <span>🔄</span>} {/* Icono por defecto */}
                             </div>
                             <Typography variant="h6" style={{ color: '#2c3e50', fontWeight: 'bold' }}>
                                 {categoria.charAt(0).toUpperCase() + categoria.slice(1)}
