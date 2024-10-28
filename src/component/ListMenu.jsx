@@ -1,3 +1,4 @@
+// ListMenu.js
 import React from 'react';
 import { List, ListItem, Typography, Divider } from '@mui/material';
 import '@fontsource/lobster';
@@ -10,19 +11,9 @@ function ListMenu() {
 
   return (
     <div style={{ padding: '20px', backgroundColor: '#f7f1e3' }}>
-      <Typography variant="h3" gutterBottom style={{ fontFamily: 'Lobster', textAlign: 'center', color: '#d35400' }}>
-        Pizzería Felipe
-      </Typography>
       
-      {/* Logo de la pizzería */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
-        <img src={logo} alt="Logo de Pizzería Felipe" style={{ width: '250px', height: 'auto', borderRadius: '100%', maxWidth: '100%' }} />
-      </div>
-      
-      {/* Menú de Categorías */}
       <CardMenu datos={datos} />
-      
-      {/* Secciones individuales para cada categoría */}
+      <h1>Menu</h1>
       {Object.keys(menuItems).map((categoria) => (
         <div key={categoria} id={categoria} style={{ marginTop: '30px' }}>
           <Typography variant="h5" gutterBottom style={{ color: '#2c3e50' }}>
