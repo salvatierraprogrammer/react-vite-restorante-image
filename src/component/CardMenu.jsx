@@ -9,10 +9,12 @@ const iconMap = {
     guarniciones: <span role="img" aria-label="guarniciones" style={{ fontSize: '2em' }}>🥗</span>,
     postres: <span role="img" aria-label="postres" style={{ fontSize: '2em' }}>🍰</span>,
     minutas: <span role="img" aria-label="minutas" style={{ fontSize: '2em' }}>🍳</span>,
-    platosDelDia: <span role="img" aria-label="plato del día" style={{ fontSize: '2em' }}>🍽️</span>,
+    "Platos del dia": <span role="img" aria-label="plato del día" style={{ fontSize: '2em' }}>🍽️</span>,
 };
 
 function CardMenu({ datos }) {
+    console.log("Card Menu", datos);
+
     const handleCardClick = (categoria) => {
         const section = document.getElementById(categoria);
         if (section) {
@@ -47,7 +49,7 @@ function CardMenu({ datos }) {
                     </CardContent>
                 </Card>
             </Grid>
-            {Object.keys(datos[0]).map((categoria) => (
+            {Object.keys(datos).map((categoria) => (
                 <Grid item xs={6} sm={4} md={3} lg={2} key={categoria}>
                     <Card 
                         style={{
@@ -62,13 +64,13 @@ function CardMenu({ datos }) {
                     >
                         <CardContent style={{ textAlign: 'center' }}>
                             <div style={{ marginBottom: '15px' }}>
-                                {iconMap[categoria] || <span>🔄</span>}
+                                {iconMap[categoria] || <span>🍽️</span>}
                             </div>
-                            <Typography variant="h6" style={{ color: '#2c3e50', fontWeight: 'bold' }}>
+                            <Typography variant="h6" style={{ color: '#2c3e50', fontWeight: 'bold', fontSize: categoria === "Platos del dia" ? '1.2em' : 'inherit' }}>
                                 {categoria.charAt(0).toUpperCase() + categoria.slice(1)}
                             </Typography>
                             <Typography variant="body2" style={{ color: '#7f8c8d' }}>
-                                {datos[0][categoria].length} platillos
+                                {Object.keys(datos[categoria]).length} platillos
                             </Typography>
                         </CardContent>
                     </Card>

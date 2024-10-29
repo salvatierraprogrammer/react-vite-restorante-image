@@ -67,3 +67,72 @@ export const datos = [
         ]
     }
 ];
+
+// Json realtime database
+// {
+//     "empanadas": {
+//       "Salteña": { "precio": 1500, "precioDoc": 16500 },
+//       "Carne": { "precio": 1300, "precioDoc": 14300 },
+//       "Pollo": { "precio": 1300, "precioDoc": 14300 },
+//       "Jamón y queso": { "precio": 1300, "precioDoc": 14300 },
+//       "Verdura": { "precio": 1300, "precioDoc": 14300 },
+//       "Cebolla y queso": { "precio": 1300, "precioDoc": 14300 },
+//       "Roquefort": { "precio": 1300, "precioDoc": 14300 },
+//       "Caprese": { "precio": 1300, "precioDoc": 14300 },
+//       "Humita": { "precio": 1300, "precioDoc": 14300 }
+//     },
+//     "pizzas": {
+//       "Muzzarella": { "precio": 7800, "grande": 4100 },
+//       "Jamón": { "precio": 9000, "grande": 4800 },
+//       "Napolitana": { "precio": 10500, "grande": 5300 },
+//       "Napolitana con jamón": { "precio": 9000, "grande": 4800 },
+//       "Fugazzeta": { "precio": 9000, "grande": 4800 },
+//       "Calabresa": { "precio": 10000, "grande": 5300 },
+//       "Tres hermanos": { "precio": 10500, "grande": 5300 },
+//       "Especial": { "precio": 12000, "grande": 7500 },
+//       "Caballero": { "precio": 10500, "grande": 7500 },
+//       "Pizza con anchoas": { "precio": 15000, "grande": 7500 }
+//     },
+//     "milanesas": {
+//       "Milanesa con fritas": { "precio": 5000 },
+//       "Suprema con fritas": { "precio": 6000 },
+//       "Napolitana con fritas": { "precio": 8000 },
+//       "Fugazzeta con fritas": { "precio": 8500 },
+//       "Roquefort con fritas": { "precio": 10000 }
+//     },
+//     "sandwiches": {
+//       "Lomito completo": { "precio": 6500 },
+//       "Lomito simple": { "precio": 5000 },
+//       "Pollo simple": { "precio": 5000 },
+//       "Pollo completo": { "precio": 5500 },
+//       "Hamburguesa simple": { "precio": 4000 },
+//       "Hamburguesa completa": { "precio": 5000 },
+//       "Choripán": { "precio": 3500 }
+//     },
+//     "guarniciones": {
+//       "Ensalada mixta": { "precio": 500 },
+//       "Papas fritas": { "precio": 500 }
+//     },
+//     "postres": {
+//       "Flan con crema": { "precio": 1500 },
+//       "Flan con dulce de leche": { "precio": 1500 },
+//       "Helado": { "precio": 1000 }
+//     },
+//     "minutas": {
+//       "Milanesa napolitana": { "precio": 5000 },
+//       "Suprema de pollo": { "precio": 5500 },
+//       "Omelette completo": { "precio": 3500 },
+//       "Revuelto gramajo": { "precio": 4000 },
+//       "Fideos con tuco": { "precio": 3500 },
+//       "Bife de chorizo": { "precio": 7000 },
+//       "Pechuga a la plancha": { "precio": 5000 },
+//       "Milanesa fugazzeta": { "precio": 8500 }
+//     },
+//     "Platos del dia": {
+//       "Tarta de verdura": { "precio": 4000 },
+//       "Pollo al horno": { "precio": 4500 },
+//       "Matambre de cerdo con fritas": { "precio": 5500 },
+//       "Pasta a la boloñesa": { "precio": 4800 },
+//       "Ñoquis con estofado": { "precio": 5000 }
+//     }
+//   }

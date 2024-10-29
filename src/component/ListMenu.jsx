@@ -1,30 +1,63 @@
 import React from 'react';
-import { List, ListItem, Typography, Divider } from '@mui/material';
+import { List, ListItem, Typography, Divider, CircularProgress, Container } from '@mui/material';
 import '@fontsource/lobster';
+import { useGetPizzeriaFelipeQuery } from '../service/ecApi';
 import CardMenu from './CardMenu';
-import { datos } from '../data/datos';
+
+const iconMap = {
+    empanadas: '🥟',
+    pizzas: '🍕',
+    milanesas: '🍽️',
+    sandwiches: '🥪',
+    guarniciones: '🥗',
+    postres: '🍰',
+    minutas: '🍳',
+    platosDelDia: '🍽️',
+};
 
 function ListMenu() {
-    const menuItems = datos[0];
+    const { data: pizzeriaData, error, isLoading } = useGetPizzeriaFelipeQuery();
+
+    // Comprueba si hay un error o si está cargando
+    if (isLoading) return  <Container
+    style={{
+      padding: '20px',
+      backgroundColor: '#f7f1e3',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+    }}
+  >
+    <CircularProgress style={{ margin: '20px', color: '#f39c12' }} />
+    <Typography variant="h5" style={{ textAlign: 'center', color: '#2c3e50' }}>
+      Cargando el menú, por favor espera...
+    </Typography>
+  </Container>;
+    if (error) return <Typography>Error al cargar el menú.</Typography>;
+
+    // Asegúrate de que pizzeriaData tenga la estructura que necesitas
+    const menuItems = pizzeriaData || {};
 
     return (
         <div style={{ padding: '20px', backgroundColor: '#f7f1e3' }}>
-            <CardMenu datos={datos} />
-  
+            <CardMenu datos={pizzeriaData}/>
             <div id="menuCompleto" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '20px 0' }}>
                 <Typography variant="h4" style={{ fontFamily: 'Lobster', color: '#d35400', textAlign: 'center' }}>
                     Menú
                 </Typography>
             </div>
-            {Object.keys(menuItems).map((categoria) => (
+            {Object.entries(menuItems).map(([categoria, items]) => (
                 <div key={categoria} id={categoria} style={{ marginTop: '30px' }} tabIndex="-1">
                     <Typography variant="h5" gutterBottom style={{ color: '#2c3e50' }}>
-                        {categoria === 'platosDelDia' ? 'Plato del Día' : categoria.charAt(0).toUpperCase() + categoria.slice(1)}
+                        {iconMap[categoria] || '🍽️'} {/* Muestra el emoticono correspondiente */}
+                        {categoria === 'platosDelDia' ? ' Plato del Día' : ` ${categoria.charAt(0).toUpperCase() + categoria.slice(1)}`}
                     </Typography>
                     <List>
-                        {menuItems[categoria].map((item, index) => (
+                        {Object.entries(items).map(([tipo, item]) => (
                             <ListItem 
-                                key={index} 
+                                key={tipo} 
                                 style={{ 
                                     padding: '10px 0', 
                                     backgroundColor: '#f7f1e3', 
@@ -35,7 +68,7 @@ function ListMenu() {
                             >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                                     <Typography variant="body1" style={{ color: '#34495e', fontWeight: 'bold' }}>
-                                        {item.tipo}
+                                        {tipo}  {/* Aquí se muestra el nombre del plato */}
                                     </Typography>
                                     <Typography variant="body2" style={{ color: '#7f8c8d' }}>
                                         {categoria === 'empanadas'

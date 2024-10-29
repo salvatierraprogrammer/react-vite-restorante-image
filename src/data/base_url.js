@@ -1,0 +1,1 @@
+export const base_url = 'https://react-vite-menu-restorante-default-rtdb.firebaseio.com/';
