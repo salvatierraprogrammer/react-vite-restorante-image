@@ -4,7 +4,6 @@ import '@fontsource/lobster';
 import logo from '/logo.png';
 import fondoPizza from '/fondoPizza.jpeg';
 import { useNavigate } from 'react-router-dom';
-import SettingsIcon from '@mui/icons-material/Settings'; // Importa un icono de configuración
 
 function Header() {
   const navigate = useNavigate();

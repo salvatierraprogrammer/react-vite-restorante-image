@@ -80,32 +80,7 @@ function Tabla({ data }) {
     setCurrentItem({ ...currentItem, [e.target.name]: e.target.value });
   };
 
-  const handleAddOrUpdateItem = async () => {
-    setIsLoading(true); // Comienza la carga
-    try {
-      if (currentItem.tipo) {
-        if (items[selectedCategory]?.some(item => item.tipo === currentItem.tipo)) {
-          await updateItem({ categoria: selectedCategory, tipo: currentItem.tipo, ...currentItem }).unwrap();
-          setSuccessMessage('Elemento actualizado con éxito!');
-        } else {
-          await addItem({ ...currentItem, categoria: selectedCategory }).unwrap();
-          setSuccessMessage('Elemento agregado con éxito!');
-        }
-      } else {
-        setErrorMessage('El campo "tipo" debe ser único y no estar vacío.');
-      }
-      setOpenSnackbar(true);
-      // Actualizar la tabla aquí si es necesario
-    } catch (error) {
-      console.error('Error al guardar el elemento: ', error);
-      setErrorMessage(error.message || 'Error al guardar el elemento.');
-      setOpenSnackbar(true);
-    } finally {
-      setIsLoading(false); // Finaliza la carga
-      handleCloseModal();
-      setCurrentItem({ tipo: '', precio: '', precioDoc: '' });
-    }
-  };
+
 
   const handleOpenConfirmDelete = (index) => {
     setDeleteIndex(index);
@@ -117,13 +92,51 @@ function Tabla({ data }) {
     setDeleteIndex(null);
   };
 
+  const handleAddOrUpdateItem = async () => {
+    setIsLoading(true); // Comienza la carga
+    try {
+      if (currentItem.tipo) {
+        const updatedCategoryItems = [...(items[selectedCategory] || [])];
+        const existingItemIndex = updatedCategoryItems.findIndex(item => item.tipo === currentItem.tipo);
+  
+        if (existingItemIndex >= 0) {
+          // Editar elemento existente
+          await updateItem({ categoria: selectedCategory, tipo: currentItem.tipo, ...currentItem }).unwrap();
+          updatedCategoryItems[existingItemIndex] = { ...currentItem };
+          setSuccessMessage('Elemento actualizado con éxito!');
+        } else {
+          // Agregar nuevo elemento
+          await addItem({ ...currentItem, categoria: selectedCategory }).unwrap();
+          updatedCategoryItems.push({ ...currentItem });
+          setSuccessMessage('Elemento agregado con éxito!');
+        }
+  
+        setItems({ ...items, [selectedCategory]: updatedCategoryItems }); // Actualiza la tabla
+      } else {
+        setErrorMessage('El campo "tipo" debe ser único y no estar vacío.');
+      }
+  
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error('Error al guardar el elemento: ', error);
+      setErrorMessage(error.message || 'Error al guardar el elemento.');
+      setOpenSnackbar(true);
+    } finally {
+      setIsLoading(false); // Finaliza la carga
+      handleCloseModal();
+      setCurrentItem({ tipo: '', precio: '', precioDoc: '' });
+    }
+  };
+  
   const handleDeleteItem = async () => {
     setIsLoading(true); // Comienza la carga
     const itemToDelete = items[selectedCategory][deleteIndex];
     try {
       await deleteItem({ categoria: selectedCategory, tipo: itemToDelete.tipo }).unwrap();
+  
       const updatedCategoryItems = items[selectedCategory].filter((_, i) => i !== deleteIndex);
-      setItems({ ...items, [selectedCategory]: updatedCategoryItems });
+      setItems({ ...items, [selectedCategory]: updatedCategoryItems }); // Actualiza la tabla localmente
+  
       setSuccessMessage('Elemento eliminado con éxito!');
       setOpenSnackbar(true);
     } catch (error) {
@@ -135,7 +148,6 @@ function Tabla({ data }) {
       handleCloseConfirmDelete();
     }
   };
-
   const handleCloseSnackbar = () => {
     setOpenSnackbar(false);
     setSuccessMessage('');
