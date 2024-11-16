@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Box, TextField, Button, Typography } from '@mui/material';
 import { auth } from '../config/Firebase';
-import {
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  setPersistence,
-  browserLocalPersistence,
-} from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
 
 function Login({ onLoginSuccess, onLogout }) {
   const [openLoginModal, setOpenLoginModal] = useState(false);
@@ -17,34 +10,59 @@ function Login({ onLoginSuccess, onLogout }) {
   const [password, setPassword] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginError, setLoginError] = useState('');
-  const navigate = useNavigate();
 
-  // Manejo del modal
+  useEffect(() => {
+    // Verifica si el usuario ya está autenticado al cargar la página
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIsLoggedIn(true);
+        if (onLoginSuccess) onLoginSuccess(); // Notifica al padre si ya está autenticado
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+
+    return () => unsubscribe(); // Limpia el listener al desmontar el componente
+  }, [onLoginSuccess]);
+
   const handleOpenLoginModal = () => setOpenLoginModal(true);
   const handleCloseLoginModal = () => setOpenLoginModal(false);
   const handleOpenLogoutModal = () => setOpenLogoutModal(true);
   const handleCloseLogoutModal = () => setOpenLogoutModal(false);
 
-  // Inicio de sesión con persistencia
   const handleSubmitLogin = () => {
-    setPersistence(auth, browserLocalPersistence) // Configura persistencia local
-      .then(() => {
-        return signInWithEmailAndPassword(auth, email, password);
-      })
+    if (!email || !password) {
+      setLoginError('Por favor completa todos los campos.');
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email, password)
       .then(() => {
         alert('Inicio de sesión exitoso.');
+        setIsLoggedIn(true);
+        onLoginSuccess(); // Notifica al padre que el usuario inició sesión
         handleCloseLoginModal();
       })
       .catch((error) => {
         console.error('Error en el inicio de sesión:', error);
-        setLoginError('Credenciales incorrectas. Inténtalo de nuevo.');
+        switch (error.code) {
+          case 'auth/user-not-found':
+            setLoginError('Usuario no encontrado. Verifica tu correo.');
+            break;
+          case 'auth/wrong-password':
+            setLoginError('Contraseña incorrecta.');
+            break;
+          default:
+            setLoginError('Ocurrió un error inesperado. Intenta más tarde.');
+        }
       });
   };
 
-  // Cierre de sesión
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
+        setIsLoggedIn(false);
+        onLogout(); // Notifica al padre que el usuario cerró sesión
         alert('Has cerrado sesión exitosamente.');
         handleCloseLogoutModal();
       })
@@ -53,23 +71,6 @@ function Login({ onLoginSuccess, onLogout }) {
       });
   };
 
-  // Observador de cambios en el estado del usuario
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setIsLoggedIn(true);
-        onLoginSuccess(); // Notifica al componente padre que el usuario ha iniciado sesión
-        navigate('/configurar'); // Redirige según tu lógica
-      } else {
-        setIsLoggedIn(false);
-        onLogout(); // Notifica al componente padre que el usuario ha cerrado sesión
-        navigate('/'); // Redirige a la página de inicio
-      }
-    });
-
-    return () => unsubscribe(); // Limpia el observador al desmontar el componente
-  }, [navigate, onLoginSuccess, onLogout]);
-
   return (
     <div>
       <Box
@@ -77,6 +78,7 @@ function Login({ onLoginSuccess, onLogout }) {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          mt: 4,
         }}
       >
         {isLoggedIn ? (
@@ -98,11 +100,11 @@ function Login({ onLoginSuccess, onLogout }) {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400,
+            width: { xs: '90%', sm: 400 },
             bgcolor: 'background.paper',
-            border: '2px solid #000',
+            borderRadius: 2,
             boxShadow: 24,
-            p: 4,
+            p: 3,
           }}
         >
           <Typography variant="h6" gutterBottom>
@@ -124,13 +126,15 @@ function Login({ onLoginSuccess, onLogout }) {
             margin="normal"
           />
           {loginError && <Typography color="error">{loginError}</Typography>}
-          <Button variant="contained" onClick={handleSubmitLogin}>
-            Iniciar Sesión
-          </Button>
+          <Box sx={{ mt: 2, display: 'flex', justifyContent: 'flex-end' }}>
+            <Button variant="contained" onClick={handleSubmitLogin}>
+              Iniciar Sesión
+            </Button>
+          </Box>
         </Box>
       </Modal>
 
-      {/* Modal para confirmar cierre de sesión */}
+      {/* Modal de confirmación para cerrar sesión */}
       <Modal open={openLogoutModal} onClose={handleCloseLogoutModal}>
         <Box
           sx={{
@@ -138,11 +142,11 @@ function Login({ onLoginSuccess, onLogout }) {
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 300,
+            width: { xs: '90%', sm: 300 },
             bgcolor: 'background.paper',
-            border: '2px solid #000',
+            borderRadius: 2,
             boxShadow: 24,
-            p: 4,
+            p: 3,
           }}
         >
           <Typography variant="h6" gutterBottom>
@@ -151,7 +155,7 @@ function Login({ onLoginSuccess, onLogout }) {
           <Typography variant="body1">
             ¿Estás seguro de que deseas cerrar sesión?
           </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
             <Button variant="contained" onClick={handleLogout}>
               Sí
             </Button>
