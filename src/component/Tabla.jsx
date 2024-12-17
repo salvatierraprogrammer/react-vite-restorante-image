@@ -17,6 +17,9 @@ import {
 import ItemModal from './ItemModal';
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import { useAddItemMutation, useUpdateItemMutation, useDeleteItemMutation } from '../service/ecApi'; // Ajusta el path
+import { iconMap } from '../data/iconMap';
+import {subirImagen}  from '../hook/SubirImg';
+
 
 function Tabla({ data }) {
   const datos = data || {};
@@ -33,20 +36,10 @@ function Tabla({ data }) {
   const [updateItem, { isLoading: isUpdating }] = useUpdateItemMutation();
   const [deleteItem, { isLoading: isDeleting }] = useDeleteItemMutation();
   const [isLoading, setIsLoading] = useState(false); // Estado de carga
-
+  
   const categories = items ? Object.keys(items) : [];
 
-  // Asocia cada categoría con su respectivo emoji
-  const iconMap = {
-    empanadas: <span role="img" aria-label="empanadas" style={{ fontSize: '2em' }}>🥟</span>,
-    pizzas: <span role="img" aria-label="pizzas" style={{ fontSize: '2em' }}>🍕</span>,
-    milanesas: <span role="img" aria-label="milanesas" style={{ fontSize: '2em' }}>🍽️</span>,
-    sandwiches: <span role="img" aria-label="sandwiches" style={{ fontSize: '2em' }}>🥪</span>,
-    guarniciones: <span role="img" aria-label="guarniciones" style={{ fontSize: '2em' }}>🥗</span>,
-    postres: <span role="img" aria-label="postres" style={{ fontSize: '2em' }}>🍰</span>,
-    minutas: <span role="img" aria-label="minutas" style={{ fontSize: '2em' }}>🍳</span>,
-    "Platos del dia":  <span role="img" aria-label="plato del día" style={{ fontSize: '2em' }}>🍽️</span>,
-  };
+  
 
   useEffect(() => {
     const parseData = () => {
@@ -67,7 +60,7 @@ function Tabla({ data }) {
     setSelectedCategory(category);
   };
 
-  const handleOpenModal = (item = { tipo: '', precio: '', precioDoc: '' }) => {
+  const handleOpenModal = (item = { tipo: '', img: '', precio: '', precioDoc: '' }) => {
     setCurrentItem(item);
     setOpenModal(true);
   };
@@ -95,20 +88,42 @@ function Tabla({ data }) {
   const handleAddOrUpdateItem = async () => {
     setIsLoading(true); // Comienza la carga
     try {
+      let imageUrl = currentItem.img; // Mantén la URL si ya existe
+  
+      // Si se subió una nueva imagen
+      if (currentItem.img && currentItem.img instanceof File) {
+        imageUrl = await subirImagen(currentItem.img); // Llama a la función utilitaria
+        console.log("URL de la imagen subida:", imageUrl);
+      }
+  
       if (currentItem.tipo) {
         const updatedCategoryItems = [...(items[selectedCategory] || [])];
-        const existingItemIndex = updatedCategoryItems.findIndex(item => item.tipo === currentItem.tipo);
+        const existingItemIndex = updatedCategoryItems.findIndex(
+          (item) => item.tipo === currentItem.tipo
+        );
   
         if (existingItemIndex >= 0) {
           // Editar elemento existente
-          await updateItem({ categoria: selectedCategory, tipo: currentItem.tipo, ...currentItem }).unwrap();
-          updatedCategoryItems[existingItemIndex] = { ...currentItem };
-          setSuccessMessage('Elemento actualizado con éxito!');
+          await updateItem({
+            categoria: selectedCategory,
+            tipo: currentItem.tipo,
+            ...currentItem,
+            img: imageUrl, // Guarda la URL actualizada de la imagen
+          }).unwrap();
+          updatedCategoryItems[existingItemIndex] = {
+            ...currentItem,
+            img: imageUrl,
+          };
+          setSuccessMessage("Elemento actualizado con éxito!");
         } else {
           // Agregar nuevo elemento
-          await addItem({ ...currentItem, categoria: selectedCategory }).unwrap();
-          updatedCategoryItems.push({ ...currentItem });
-          setSuccessMessage('Elemento agregado con éxito!');
+          await addItem({
+            ...currentItem,
+            categoria: selectedCategory,
+            img: imageUrl,
+          }).unwrap();
+          updatedCategoryItems.push({ ...currentItem, img: imageUrl });
+          setSuccessMessage("Elemento agregado con éxito!");
         }
   
         setItems({ ...items, [selectedCategory]: updatedCategoryItems }); // Actualiza la tabla
@@ -191,78 +206,93 @@ function Tabla({ data }) {
       </span>
     </Typography>
     <TableContainer component={Paper} style={{ marginTop: '20px' }}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <TableCell>Tipo</TableCell>
-        {/* Ajuste del encabezado de Precio según la categoría */}
-        {selectedCategory === 'empanadas' ? (
-             <>
-          <TableCell>Por unid</TableCell>
-          <TableCell>Por dec</TableCell>
-          </>
-        ) : selectedCategory === 'pizzas' ? (
-          
-          <>
-            <TableCell>Chica</TableCell>
-            <TableCell>Grande</TableCell>
-          </>
-        ) : (
-          <TableCell>Precio</TableCell>
-        )}
-        <TableCell>Acciones</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {isLoading ? (
-        <TableRow>
-          <TableCell colSpan={selectedCategory === 'pizzas' ? 5 : 4} align="center">
-            <CircularProgress />
-          </TableCell>
-        </TableRow>
-      ) : items[selectedCategory]?.length > 0 ? (
-        items[selectedCategory].map((item, index) => (
-          <TableRow key={index}>
-            <TableCell>{item.tipo}</TableCell>
-            {/* Contenido condicional para celdas de precio */}
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Imagen</TableCell>
+            <TableCell>Tipo</TableCell>
+            <TableCell>Descripción</TableCell>
+            {/* Ajuste del encabezado de Precio según la categoría */}
             {selectedCategory === 'empanadas' ? (
-               <>
-              <TableCell>{item.precio || 'N/A'} $</TableCell>
-              <TableCell>{item.precioDoc || 'N/A'} $</TableCell>
+              <>
+                <TableCell>Por unid</TableCell>
+                <TableCell>Por dec</TableCell>
               </>
             ) : selectedCategory === 'pizzas' ? (
               <>
-                <TableCell>{item.grande || 'N/A'} $</TableCell>
-                <TableCell>{item.precio || 'N/A'} $</TableCell>
+                <TableCell>Chica</TableCell>
+                <TableCell>Grande</TableCell>
               </>
             ) : (
-              <TableCell>{item.precio || 'N/A'} $</TableCell>
+              <TableCell>Precio</TableCell>
             )}
-            <TableCell>
-              <Button onClick={() => handleOpenModal(item)} color="primary">Editar</Button>
-              <Button onClick={() => handleOpenConfirmDelete(index)} color="secondary">Eliminar</Button>
-            </TableCell>
+            <TableCell>Acciones</TableCell>
           </TableRow>
-        ))
-      ) : (
-        <TableRow>
-          <TableCell colSpan={selectedCategory === 'pizzas' ? 5 : 4} align="center">
-            No hay elementos disponibles en esta categoría.
-          </TableCell>
-        </TableRow>
-      )}
-    </TableBody>
-  </Table>
-</TableContainer>
+        </TableHead>
+        <TableBody>
+          {isLoading ? (
+            <TableRow>
+              <TableCell colSpan={selectedCategory === 'pizzas' ? 6 : 5} align="center">
+                <CircularProgress />
+              </TableCell>
+            </TableRow>
+          ) : items[selectedCategory]?.length > 0 ? (
+            items[selectedCategory].map((item, index) => (
+              <TableRow key={index}>
+                <TableCell>
+                  <img
+                    src={item.img || 'https://via.placeholder.com/50'}
+                    alt={item.tipo}
+                    style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '8px' }}
+                  />
+                </TableCell>
+                <TableCell>{item.tipo}</TableCell>
+                <TableCell>
+                  {item.descripcion ? (
+                    item.descripcion.length > 10
+                      ? `${item.descripcion.substring(0, 10)}...`
+                      : item.descripcion
+                  ) : 'N/A'}
+                </TableCell>
+                {/* Contenido condicional para celdas de precio */}
+                {selectedCategory === 'empanadas' ? (
+                  <>
+                    <TableCell>{item.precio || 'N/A'} $</TableCell>
+                    <TableCell>{item.precioDoc || 'N/A'} $</TableCell>
+                  </>
+                ) : selectedCategory === 'pizzas' ? (
+                  <>
+                    <TableCell>{item.grande || 'N/A'} $</TableCell>
+                    <TableCell>{item.precio || 'N/A'} $</TableCell>
+                  </>
+                ) : (
+                  <TableCell>{item.precio || 'N/A'} $</TableCell>
+                )}
+                <TableCell>
+                  <Button onClick={() => handleOpenModal(item)} color="primary">Editar</Button>
+                  <Button onClick={() => handleOpenConfirmDelete(index)} color="secondary">Eliminar</Button>
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={selectedCategory === 'pizzas' ? 6 : 5} align="center">
+                No hay elementos disponibles en esta categoría.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
 
-<ItemModal 
-  open={openModal} 
-  onClose={handleCloseModal} 
-  currentItem={currentItem} 
-  onChange={handleChange} 
-  onSave={handleAddOrUpdateItem} 
-  selectedCategory={selectedCategory} // Nueva prop
-/>
+    <ItemModal 
+      open={openModal} 
+      onClose={handleCloseModal} 
+      currentItem={currentItem} 
+      onChange={handleChange} 
+      onSave={handleAddOrUpdateItem} 
+      selectedCategory={selectedCategory} // Nueva prop
+    />
 
     <ConfirmDeleteModal 
       open={confirmDeleteModal} 

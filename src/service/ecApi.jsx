@@ -1,5 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { base_url } from '../data/base_url'; // Asegúrate de que el path es correcto
+import { base_url } from '../data/base_url';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; 
+import { db, storage } from '../config/Firebase';
+
+
 export const ecApi = createApi({
   reducerPath: "ecApi",
   baseQuery: fetchBaseQuery({
@@ -17,6 +21,18 @@ export const ecApi = createApi({
         }),
     
     }),
+    // addImg: builder.mutation({
+    //   async queryFn({ archivo }) {
+    //     try {
+    //       const storageRef = ref(storage, `img/${archivo.name}`);
+    //       const snapshot = await uploadBytes(storageRef, archivo);
+    //       const archivoUrl = await getDownloadURL(snapshot.ref);
+    //       return { data: archivoUrl }; // Retorna la URL de la imagen
+    //     } catch (error) {
+    //       return { error: { message: error.message } };
+    //     }
+    //   },
+    // }),
     updateItem: builder.mutation({
         query: ({ categoria, tipo, ...updatedItem }) => ({
           url: `prizzeriafelipe/menu2/${categoria}/${tipo}.json`, // Ruta correcta para actualizar
@@ -38,5 +54,6 @@ export const {
   useGetPizzeriaFelipeQuery,
   useAddItemMutation,
   useUpdateItemMutation,
-  useDeleteItemMutation 
+  useDeleteItemMutation,
+  // useAddImgMutation, 
 } = ecApi;

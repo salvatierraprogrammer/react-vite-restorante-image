@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, CircularProgress } from '@mui/material';
 import { useGetPizzeriaFelipeQuery } from '../service/ecApi'; 
+
+
 import Tabla from '../component/Tabla';
 import Login from '../auth/Login';
 
 function Configurar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const { data: pizzeriaData, error, isLoading } = useGetPizzeriaFelipeQuery();
-
+  
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
   };

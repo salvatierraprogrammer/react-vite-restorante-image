@@ -1,7 +1,23 @@
 import React from 'react';
-import { Modal, Box, TextField, Button } from '@mui/material';
+import { Modal, Box, TextField, Button, Avatar } from '@mui/material';
 
 const ItemModal = ({ open, onClose, currentItem, onChange, onSave, selectedCategory }) => {
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onChange({
+          target: {
+            name: 'img',
+            value: reader.result, // Guardar la imagen como base64
+          },
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box
@@ -16,37 +32,81 @@ const ItemModal = ({ open, onClose, currentItem, onChange, onSave, selectedCateg
           border: '2px solid #000',
           boxShadow: 24,
           p: 4,
+          borderRadius: '10px',
         }}
       >
-           <TextField
-            label="Nombre del plato"
-            name="tipo"
-            value={currentItem.tipo}
-            onChange={onChange}
-            fullWidth
-            margin="normal"
+        {/* Campo para imagen */}
+        <div style={{ textAlign: 'center', marginBottom: '15px' }}>
+          <Avatar
+            alt="Imagen del plato"
+            src={
+              currentItem.img
+                ? typeof currentItem.img === 'string'
+                  ? currentItem.img
+                  : URL.createObjectURL(currentItem.img)
+                : 'https://via.placeholder.com/200x150?text=No+Image'
+            }
+            sx={{
+              width: '150px',
+              height: '150px',
+              margin: '0 auto 10px auto',
+              objectFit: 'cover',
+            }}
           />
-       
-        {/* Hide this field if selectedCategory is 'empanadas' or 'pizzas' */}
-        {!(selectedCategory === 'empanadas' || selectedCategory === 'pizzas') && (
-       
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            style={{ display: 'none' }}
+            id="image-upload"
+          />
+          <label htmlFor="image-upload">
+            <Button variant="outlined" component="span">
+              {currentItem.img ? 'Cambiar Imagen' : 'Subir Imagen'}
+            </Button>
+          </label>
+        </div>
 
+        {/* Campos de texto */}
         <TextField
-          label="Precio"
-          name="precio"
-          value={currentItem.precio}
+          label="Nombre del plato"
+          name="tipo"
+          value={currentItem.tipo}
           onChange={onChange}
           fullWidth
           margin="normal"
         />
-      )}
-        {/* Condicional para mostrar campos específicos de acuerdo a la categoría */}
+
+        <TextField
+          label="Descripción"
+          name="descripcion"
+          value={currentItem.descripcion || ''}
+          onChange={onChange}
+          fullWidth
+          margin="normal"
+          multiline
+          rows={3}
+        />
+
+        {/* Precio */}
+        {!(selectedCategory === 'empanadas' || selectedCategory === 'pizzas') && (
+          <TextField
+            label="Precio"
+            name="precio"
+            value={currentItem.precio || ''}
+            onChange={onChange}
+            fullWidth
+            margin="normal"
+          />
+        )}
+
+        {/* Campos condicionales */}
         {selectedCategory === 'empanadas' && (
           <>
             <TextField
               label="Precio por Unidad"
-              name="precio"
-              value={currentItem.precioUnidad} // Use a unique name to avoid conflicts
+              name="precioUnidad"
+              value={currentItem.precioUnidad || ''}
               onChange={onChange}
               fullWidth
               margin="normal"
@@ -54,7 +114,7 @@ const ItemModal = ({ open, onClose, currentItem, onChange, onSave, selectedCateg
             <TextField
               label="Precio por Docena"
               name="precioDoc"
-              value={currentItem.precioDocena} // Use a unique name to avoid conflicts
+              value={currentItem.precioDocena || ''}
               onChange={onChange}
               fullWidth
               margin="normal"
@@ -66,27 +126,29 @@ const ItemModal = ({ open, onClose, currentItem, onChange, onSave, selectedCateg
           <>
             <TextField
               label="Precio Chica"
-              name="precio"
-              value={currentItem.precioChica} // Use a unique name to avoid conflicts
+              name="precioChica"
+              value={currentItem.precioChica || ''}
               onChange={onChange}
               fullWidth
               margin="normal"
             />
             <TextField
               label="Precio Grande"
-              name="grande"
-              value={currentItem.precioGrande} // Use a unique name to avoid conflicts
+              name="precioGrande"
+              value={currentItem.precioGrande || ''}
               onChange={onChange}
               fullWidth
               margin="normal"
             />
           </>
         )}
-        <div style={{ display: 'flex', justifyContent: 'space-evenly', width: '100%' }}>
-          <Button variant="contained" onClick={onSave}>
+
+        {/* Botones */}
+        <div style={{ display: 'flex', justifyContent: 'space-evenly', marginTop: '20px' }}>
+          <Button variant="contained" color="primary" onClick={onSave}>
             {currentItem.tipo ? '💾 Guardar cambios' : '💾 Guardar'}
           </Button>
-          <Button variant="contained" onClick={onClose}>
+          <Button variant="contained" color="error" onClick={onClose}>
             ❌ Cancelar
           </Button>
         </div>
