@@ -5,12 +5,13 @@ const ItemModal = ({ open, onClose, currentItem, onChange, onSave, selectedCateg
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
+      // Aquí puedes agregar lógica para cargar la imagen (por ejemplo, usando un servicio de almacenamiento en la nube)
       const reader = new FileReader();
       reader.onloadend = () => {
         onChange({
           target: {
-            name: 'img',
-            value: reader.result, // Guardar la imagen como base64
+            name: 'img', // Asegúrate de que el nombre de este campo coincida con el que usas para la imagen en currentItem
+            value: file,
           },
         });
       };
